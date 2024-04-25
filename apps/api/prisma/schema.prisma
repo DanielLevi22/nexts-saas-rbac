@@ -26,7 +26,7 @@ model User {
   invites            Invite[]
   member_on          Member[]
   owns_organizations Organization[]
-  Project            Project[]
+  owns_projects      Project[]
 
   @@map("users")
 }
