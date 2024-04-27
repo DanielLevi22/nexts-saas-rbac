@@ -1,4 +1,4 @@
-import { compare } from 'bcryptjs'
+import { env } from '@saas/env'
 import type { FastifyInstance } from 'fastify'
 import type { ZodTypeProvider } from 'fastify-type-provider-zod'
 import z from 'zod'
@@ -31,14 +31,14 @@ export async function authenticateWithGithub(app: FastifyInstance) {
         'https://github.com/login/oauth/access_token',
       )
 
-      githubOAuthURL.searchParams.set('client_id', 'c1c4850ee05becdcd79a')
+      githubOAuthURL.searchParams.set('client_id', env.GITHUB_OAUTH_CLIENT_ID)
       githubOAuthURL.searchParams.set(
         'client_secret',
-        '6a2214ee37ad57b5280918df189e5fe91bd7d492',
+        env.GITHUB_OAUTH_CLIENT_SECRET,
       )
       githubOAuthURL.searchParams.set(
         'redirect_uri',
-        'http://localhost:3000/api/auth/callback',
+        env.GITHUB_OAUTH_CLIENT_URI,
       )
       githubOAuthURL.searchParams.set('code', code)
 
@@ -123,7 +123,7 @@ export async function authenticateWithGithub(app: FastifyInstance) {
       }
       const token = await reply.jwtSign(
         {
-          sub: userFromEmail.id,
+          sub: user.id,
         },
         {
           sign: {

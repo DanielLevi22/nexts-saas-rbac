@@ -1,0 +1,30 @@
+
+### @create user
+POST http://localhost:3333/users
+Content-Type: application/json
+
+{
+  "name": "daniel",
+  "email": "daniel@email.com",
+  "password": "123456"
+}
+
+
+### @auth user
+POST http://localhost:3333/sessions/password
+Content-Type: application/json
+
+{
+  "email": "daniel@email.com",
+  "password": "123456"
+}
+
+### @getProfile user
+POST http://localhost:3333/profile
+Content-Type: application/json
+
+{
+  "email": "daniel@email.com",
+  "password": "123456"
+}
+
