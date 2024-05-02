@@ -46,6 +46,8 @@ export function defineAbilityFor(user: User) {
       return subject.__typename
     },
   })
+  ability.can = ability.can.bind(ability)
+  ability.cannot = ability.can.bind(ability)
 
   return ability
 }
