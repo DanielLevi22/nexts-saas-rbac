@@ -19,7 +19,8 @@ import { getProfile } from './routes/auth/get-profile'
 import { requestPasswordRecover } from './routes/auth/request-password-recover'
 import { resetPassword } from './routes/auth/reset-password'
 import { getMembers } from './routes/member/get-member'
-import { updateMembers } from './routes/member/update-member'
+import { removeMember } from './routes/member/remove-member'
+import { updateMember } from './routes/member/update-member'
 import { createOrganization } from './routes/orgs/create-organization'
 import { getMembership } from './routes/orgs/get-membership'
 import { getOrganization } from './routes/orgs/get-organization'
@@ -89,7 +90,8 @@ app.register(getProjects)
 app.register(updateProject)
 
 app.register(getMembers)
-app.register(updateMembers)
+app.register(updateMember)
+app.register(removeMember)
 
 app.listen({ port: env.SERVER_PORT }).then(() => {
   console.log('server listening running')
