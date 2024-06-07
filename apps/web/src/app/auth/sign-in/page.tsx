@@ -6,10 +6,12 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
+
+import { signInWithEmailAndPassword } from './actions'
 export default function SignInPage() {
   return (
     <form
-      action=""
+      action={signInWithEmailAndPassword}
       className="space-y-4
     "
     >
