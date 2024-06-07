@@ -6,35 +6,39 @@ import { Button, buttonVariants } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-export default function SignInPage() {
+export default function SignUpPage() {
   return (
     <form
       action=""
       className="space-y-4
     "
     >
+      <div className="space-y-1">
+        <Label htmlFor="name">Name</Label>
+        <Input name="name" id="name" />
+      </div>
       <div className=" space-y-1">
         <Label htmlFor="email">E-mail</Label>
         <Input name="email" type="email" id="email" />
       </div>
-      <div className=" space-y-1">
+      <div className="space-y-1">
         <Label htmlFor="password">Password</Label>
         <Input name="password" type="password" id="password" />
-
-        <Link
-          href="/auth/forgot-password"
-          className="text-xs font-medium text-foreground hover:underline"
-        >
-          Forgot your password?
-        </Link>
+      </div>
+      <div className="space-y-1">
+        <Label htmlFor="password_confirmations">Confirm your password</Label>
+        <Input
+          name="password_confirmations"
+          type="password"
+          id="password_confirmations"
+        />
       </div>
 
       <Button className="w-full" type="submit">
-        Sign in with e-mail
+        Create account
       </Button>
-
       <Link
-        href="/auth/sign-up"
+        href="/auth/sign-in"
         className={buttonVariants({
           variant: 'link',
           className: 'w-full',
@@ -42,14 +46,14 @@ export default function SignInPage() {
         })}
         type="submit"
       >
-        Create new account
+        Already registered? Sign in
       </Link>
 
       <Separator />
 
       <Button variant="outline" type="submit" className="w-full">
         <Image src={githubIcon} alt="" className="mr-2 size-4 dark:invert" />
-        Sign in with Github
+        Sign up with Github
       </Button>
     </form>
   )
