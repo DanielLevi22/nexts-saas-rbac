@@ -3,7 +3,7 @@
 import { AlertTriangle, Loader2 } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useActionState } from 'react'
+import { type FormEvent, useState, useTransition } from 'react'
 
 import githubIcon from '@/assets/github.svg'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -15,18 +15,30 @@ import { Separator } from '@/components/ui/separator'
 import { signInWithEmailAndPassword } from './actions'
 
 export default function SignInForm() {
-  const [{ errors, message, success }, formAction, isPending] = useActionState(
-    signInWithEmailAndPassword,
-    {
-      success: false,
-      message: null,
-      errors: null,
-    },
-  )
+  const [isPending, startTransaction] = useTransition()
+  const [{ errors, message, success }, setFormaState] = useState<{
+    success: boolean
+    message: string | null
+    errors: Record<string, string[]> | null
+  }>({
+    success: false,
+    message: null,
+    errors: null,
+  })
+
+  async function handleSignIn(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    const data = new FormData(event.currentTarget)
+
+    startTransaction(async () => {
+      const result = await signInWithEmailAndPassword(data)
+      setFormaState(result)
+    })
+  }
 
   return (
     <form
-      action={formAction}
+      onSubmit={handleSignIn}
       className="space-y-4
 "
     >
