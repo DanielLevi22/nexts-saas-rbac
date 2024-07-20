@@ -1,9 +1,9 @@
 import fastifyCors from '@fastify/cors'
 import fastifyJwt from '@fastify/jwt'
 import fastifySwagger from '@fastify/swagger'
-import fastifySwaggerUi from '@fastify/swagger-ui'
+import fastifySwaggerUI from '@fastify/swagger-ui'
 import { env } from '@saas/env'
-import { fastify } from 'fastify'
+import fastify from 'fastify'
 import {
   jsonSchemaTransform,
   serializerCompiler,
@@ -11,48 +11,50 @@ import {
   ZodTypeProvider,
 } from 'fastify-type-provider-zod'
 
-import { errorHandler } from './error-handler'
-import { authenticateWithGithub } from './routes/auth/authenticate-with-github'
-import { authenticateWithPassword } from './routes/auth/authenticate-with-password'
+import { errorHandler } from '@/http/error-handler'
+import { authenticateWithGithub } from '@/http/routes/auth/authenticate-with-github'
+import { authenticateWithPassword } from '@/http/routes/auth/authenticate-with-password'
+import { getProfile } from '@/http/routes/auth/get-profile'
+import { requestPasswordRecover } from '@/http/routes/auth/request-password-recover'
+import { resetPassword } from '@/http/routes/auth/reset-password'
+import { getOrganizationBilling } from '@/http/routes/billing/get-organization-billing'
+import { acceptInvite } from '@/http/routes/invites/accept-invite'
+import { createInvite } from '@/http/routes/invites/create-invite'
+import { getPendingInvites } from '@/http/routes/invites/get-pending-invites'
+import { rejectInvite } from '@/http/routes/invites/reject-invite'
+import { revokeInvite } from '@/http/routes/invites/revoke-invite'
+import { createOrganization } from '@/http/routes/orgs/create-organization'
+import { getMembership } from '@/http/routes/orgs/get-membership'
+import { getOrganization } from '@/http/routes/orgs/get-organization'
+import { getOrganizations } from '@/http/routes/orgs/get-organizations'
+import { shutdownOrganization } from '@/http/routes/orgs/shutdown-organization'
+import { transferOrganization } from '@/http/routes/orgs/transfer-organization'
+import { updateOrganization } from '@/http/routes/orgs/update-organization'
+import { createProject } from '@/http/routes/projects/create-project'
+import { deleteProject } from '@/http/routes/projects/delete-project'
+import { getProject } from '@/http/routes/projects/get-project'
+import { getProjects } from '@/http/routes/projects/get-projects'
+import { updateProject } from '@/http/routes/projects/update-project'
+
 import { createAccount } from './routes/auth/create-account'
-import { getProfile } from './routes/auth/get-profile'
-import { requestPasswordRecover } from './routes/auth/request-password-recover'
-import { resetPassword } from './routes/auth/reset-password'
-import { acceptInvite } from './routes/invites/accept-invite'
-import { createInvite } from './routes/invites/create-invite'
 import { getInvite } from './routes/invites/get-invete'
 import { getInvites } from './routes/invites/get-invites'
-import { getPendingInvites } from './routes/invites/get-pending-invites'
-import { rejectInvite } from './routes/invites/reject-invite'
-import { revokeInvite } from './routes/invites/revoke-invite'
 import { getMembers } from './routes/member/get-member'
 import { removeMember } from './routes/member/remove-member'
 import { updateMember } from './routes/member/update-member'
-import { createOrganization } from './routes/orgs/create-organization'
-import { getMembership } from './routes/orgs/get-membership'
-import { getOrganization } from './routes/orgs/get-organization'
-import { getOrganizations } from './routes/orgs/get-organizations'
-import { shutdownOrganization } from './routes/orgs/shutdown-organization'
-import { transferOrganization } from './routes/orgs/transfer-organization'
-import { updateOrganization } from './routes/orgs/update-organization'
-import { createProject } from './routes/projects/create-project'
-import { deleteProject } from './routes/projects/delete-project'
-import { getProject } from './routes/projects/get-project'
-import { getProjects } from './routes/projects/get-projects'
-import { updateProject } from './routes/projects/update-project'
 
 const app = fastify().withTypeProvider<ZodTypeProvider>()
+
 app.setSerializerCompiler(serializerCompiler)
 app.setValidatorCompiler(validatorCompiler)
 
 app.setErrorHandler(errorHandler)
 
-app.register(fastifyCors)
 app.register(fastifySwagger, {
   openapi: {
     info: {
-      title: 'Next.js Saas',
-      description: 'Full-stack Saas app with multi-tenant & RBAC',
+      title: 'Next.js SaaS',
+      description: 'Full-stack SaaS with multi-tenant & RBAC.',
       version: '1.0.0',
     },
     components: {
@@ -68,13 +70,16 @@ app.register(fastifySwagger, {
   transform: jsonSchemaTransform,
 })
 
-app.register(fastifySwaggerUi, {
+app.register(fastifySwaggerUI, {
   routePrefix: '/docs',
 })
 
 app.register(fastifyJwt, {
   secret: env.JWT_SECRET,
 })
+
+app.register(fastifyCors)
+
 app.register(createAccount)
 app.register(authenticateWithPassword)
 app.register(authenticateWithGithub)
@@ -108,6 +113,8 @@ app.register(rejectInvite)
 app.register(revokeInvite)
 app.register(getPendingInvites)
 
+app.register(getOrganizationBilling)
+
 app.listen({ port: env.SERVER_PORT }).then(() => {
-  console.log('server listening running')
+  console.log('HTTP server running!')
 })
