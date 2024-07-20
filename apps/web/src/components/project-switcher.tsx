@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { ChevronsUpDown, PlusCircle } from 'lucide-react'
+import { ChevronsUpDown, Loader2, PlusCircle } from 'lucide-react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 
@@ -17,10 +17,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu'
+import { Skeleton } from './ui/skeleton'
 
 export function ProjectSwitcher() {
-  const { slug: orgSlug } = useParams<{
+  const { slug: orgSlug, project: projectSlug } = useParams<{
     slug: string
+    project: string
   }>()
 
   const { data, isLoading } = useQuery({
@@ -28,22 +30,43 @@ export function ProjectSwitcher() {
     queryFn: () => getProjects(orgSlug),
     enabled: !!orgSlug,
   })
-  console.log(data)
+
+  const currentProject =
+    data && projectSlug
+      ? data.projects.find((p) => p.slug === projectSlug)
+      : null
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex w-[168px] items-center gap-2 rounded p-1 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-primary">
-        {/* {currentOrganization ? (
+        {isLoading ? (
           <>
-            <Avatar className="mr-2 size-4">
-              {currentOrganization.avatarU
-￼-left">
-              {currentOrganization.name}
-            </span>
+            <Skeleton className="size-4 shrink-0 rounded-full" />
+            <Skeleton className="h-4 w-full" />
           </>
-        ) : ( */}
-        <span className="text-muted-foreground">Select project</span>
-        {/* )} */}
-        <ChevronsUpDown className="ml-auto size-4 text-muted-foreground" />
+        ) : (
+          <>
+            {currentProject ? (
+              <>
+                <Avatar className=" size-4">
+                  {currentProject.avatarUrl && (
+                    <AvatarImage src={currentProject.avatarUrl} />
+                  )}
+                </Avatar>
+                <span className="truncate text-left">
+                  {currentProject.name}
+                </span>
+              </>
+            ) : (
+              <span className="text-muted-foreground">Select project</span>
+            )}
+          </>
+        )}
+        {isLoading ? (
+          <Loader2 className="ml-auto size-4 flex-shrink-0 animate-spin" />
+        ) : (
+          <ChevronsUpDown className="ml-auto size-4 flex-shrink-0 text-muted-foreground" />
+        )}
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
@@ -57,7 +80,7 @@ export function ProjectSwitcher() {
             data.projects.map((project) => {
               return (
                 <DropdownMenuItem key={project.id} asChild>
-                  <Link href={`/org/${orgSlug}/create-project`}>
+                  <Link href={`/org/${orgSlug}/project/${project.slug}`}>
                     {' '}
                     <Avatar className="mr-2 size-4">
                       {project.avatarUrl && (
@@ -73,7 +96,7 @@ export function ProjectSwitcher() {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href="">
+          <Link href={`/org/${orgSlug}/create-project`}>
             <PlusCircle className="mr-2 size-4" />
             Create new
           </Link>
