@@ -1,4 +1,4 @@
-import { ability } from '@/auth/auth'
+import { ability, getCurrentOrg } from '@/auth/auth'
 import {
   Card,
   CardContent,
@@ -6,11 +6,14 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { getOrganization } from '@/http/get-organization'
 
 import { OrganizationForm } from '../../organization-form'
 import { ShutdownOrganizationButton } from './shutown-organzation-button'
 
 export default async function Settings() {
+  const currentOrg = getCurrentOrg()
+  const { organization } = await getOrganization(currentOrg!)
   const permissions = await ability()
 
   const canUpdateOrganization = permissions?.can('update', 'Organization')
@@ -30,7 +33,15 @@ export default async function Settings() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <OrganizationForm />
+              <OrganizationForm
+                isUpdating
+                initialData={{
+                  name: organization.name,
+                  domain: organization.domain,
+                  shouldAttachUsersByDomain:
+                    organization.shouldAttachUsersByDomain,
+                }}
+              />
             </CardContent>
           </Card>
         )}
